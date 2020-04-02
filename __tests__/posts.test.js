@@ -74,7 +74,7 @@ describe('Post routes', () => {
     const post = await getPost({ user: user._id });
 
     return getAgent()
-      .patch(`/posts/${post._id}`)
+      .delete(`/posts/${post._id}`)
       .then(res => {
         expect(res.body).toEqual(post);
       });
