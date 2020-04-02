@@ -3,7 +3,7 @@ const Post = require('../lib/models/Post');
 const Comment = require('../lib/models/Comment');
 const chance = require('chance').Chance();
 
-module.exports = async({ usersToCreate = 3, postsToCreate = 5, commentsToCreate = 7 } = {}) => {
+module.exports = async({ usersToCreate = 3, postsToCreate = 10, commentsToCreate = 30 } = {}) => {
   
   // Add authorized user and related objects for testing
   const authUser = await User.create({

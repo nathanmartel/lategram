@@ -1,4 +1,4 @@
-const { getUser, getPost, getPosts, getAgent } = require('../db/data-helpers');
+const { getUser, getPost, getPosts, getComments, getAgent } = require('../db/data-helpers');
 
 const mongoose = require('mongoose');
 const request = require('supertest');
@@ -43,13 +43,15 @@ describe('Post routes', () => {
   it('gets a specific post', async() => {
     const post = await getPost();
     const user = await getUser({ _id: post.user });
+    const comments = await getComments({ post: post._id });
 
     return request(app)
       .get(`/posts/${post._id}`)
       .then(res => {
         expect(res.body).toEqual({
           ...post,
-          user: user
+          user: user,
+          comments: comments
         });
       });
   });
