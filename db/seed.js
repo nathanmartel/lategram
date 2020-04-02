@@ -1,18 +1,19 @@
-const { getUser } = require('./data-helpers');
-
 const User = require('../lib/models/User');
+const Post = require('../lib/models/Post');
 const chance = require('chance').Chance();
 
-module.exports = async({ usersToCreate = 1 } = {}) => {
+module.exports = async({ postsToCreate = 5 } = {}) => {
   
-  await User.create({
+  const user = await User.create({
     username: 'testUser',
     password: 'testPass'
   });
 
-  // const reviewers = await Reviewer.create([...Array(reviewersToCreate)].map(() => ({
-  //   name: chance.name(),
-  //   company: chance.company()
-  // })));
+  const posts = await Post.create([...Array(postsToCreate)].map(() => ({
+    user: user._id,
+    photoUrl: chance.url(),
+    caption: chance.sentence(),
+    tags: [chance.word(), chance.word()]
+  })));
 
 };

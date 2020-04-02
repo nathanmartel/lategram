@@ -1,5 +1,6 @@
-const { getUser, getPost, getAgent } = require('../db/data-helpers');
+const { getUser, getPost, getPosts, getAgent } = require('../db/data-helpers');
 
+const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
@@ -29,49 +30,54 @@ describe('Post routes', () => {
       });
   });
 
-  // it('gets a film by id', async() => {
-  //   const film = await getFilm();
+  it('gets all posts', async() => {
+    const posts = await getPosts();
 
-  //   return request(app)
-  //     .get(`/api/v1/films/${film._id}`)
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         ...film
-  //       });
-  //     });
-  // });
+    return request(app)
+      .get('/posts')
+      .then(res => {
+        expect(res.body).toEqual(posts);
+      });
+  });
 
-  // it('gets all films', async() => {
-  //   const films = await getFilms();
+  it('gets a specific post', async() => {
+    const post = await getPost();
+    const user = await getUser({ _id: post.user });
 
-  //   return request(app)
-  //     .get('/api/v1/films')
-  //     .then(res => {
-  //       expect(res.body).toEqual(films);
-  //     });
-  // });
+    return request(app)
+      .get(`/posts/${post._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          ...post,
+          user: user
+        });
+      });
+  });
 
-  // it('updates a film by id', async() => {
-  //   const film = await getFilm();
+  it('updates a post', async() => {
+    const user = await getUser({ username: 'testUser' });
+    const post = await getPost({ user: user._id });
 
-  //   return request(app)
-  //     .patch(`/api/v1/films/${film._id}`)
-  //     .send({ title: '1234 test' })
-  //     .then(res => {
-  //       expect(res.body).toEqual({
-  //         ...film,
-  //         title: '1234 test'
-  //       });
-  //     });
-  // });
+    return getAgent()
+      .patch(`/posts/${post._id}`)
+      .send({ caption: 'lorem ipsum dolor' })
+      .then(res => {
+        expect(res.body).toEqual({
+          ...post,
+          caption: 'lorem ipsum dolor'
+        });
+      });
+  });
 
-  // it('deletes a film by id', async() => {
-  //   const film = await getFilm();
-    
-  //   return request(app)
-  //     .delete(`/api/v1/films/${film._id}`)
-  //     .then(res => {
-  //       expect(res.body).toEqual(film);
-  //     });
-  // });
+  it('deletes a post', async() => {
+    const user = await getUser({ username: 'testUser' });
+    const post = await getPost({ user: user._id });
+
+    return getAgent()
+      .patch(`/posts/${post._id}`)
+      .then(res => {
+        expect(res.body).toEqual(post);
+      });
+  });
+
 });
