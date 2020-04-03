@@ -56,6 +56,25 @@ describe('Post routes', () => {
       });
   });
 
+  it('gets top ten posts', async() => {
+    return request(app)
+      .get('/posts/popular')
+      .then(res => {
+        expect(res.body).toHaveLength(10);
+        res.body.forEach((item, i) => {
+          expect(item).toEqual({
+            _id: expect.any(String),
+            user: expect.any(String),
+            photoUrl: expect.any(String),
+            caption: expect.any(String),
+            tags: expect.any(Array),
+            popular: expect.any(Number)
+          });
+          if(i > 0) expect(item.popular).toBeLessThanOrEqual(res.body[i - 1].popular);
+        });
+      });
+  });
+
   it('updates a post', async() => {
     const user = await getUser({ username: 'testUser' });
     const post = await getPost({ user: user._id });
