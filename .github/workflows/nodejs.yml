@@ -21,3 +21,4 @@ jobs:
         CI: true
         MONGODB_URI: mongodb://mongo:27017/testing-ci
         APP_SECRET: literallyanything
+        SALT_ROUNDS: 5

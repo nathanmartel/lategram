@@ -1,10 +1,7 @@
 const { getUser, getPost, getPosts, getComments, getAgent } = require('../db/data-helpers');
 
-const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../lib/app');
-const User = require('../lib/models/User');
-const Post = require('../lib/models/Post');
 
 describe('Post routes', () => {
   it('creates a post', async() => {
@@ -56,7 +53,7 @@ describe('Post routes', () => {
       });
   });
 
-  it('gets top ten posts', async() => {
+  it('gets top ten posts with the most comments (popular)', async() => {
     return request(app)
       .get('/posts/popular')
       .then(res => {
@@ -64,13 +61,13 @@ describe('Post routes', () => {
         res.body.forEach((item, i) => {
           expect(item).toEqual({
             _id: expect.any(String),
+            numberOfComments: expect.any(Number),
             user: expect.any(String),
             photoUrl: expect.any(String),
             caption: expect.any(String),
-            tags: expect.any(Array),
-            popular: expect.any(Number)
+            tags: expect.any(Array)
           });
-          if(i > 0) expect(item.popular).toBeLessThanOrEqual(res.body[i - 1].popular);
+          if(i > 0) expect(item.numberOfComments).toBeLessThanOrEqual(res.body[i - 1].numberOfComments);
         });
       });
   });
